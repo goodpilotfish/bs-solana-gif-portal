@@ -1,0 +1,15 @@
+[features]
+seeds = false
+skip-lint = false
+[programs.localnet]
+anchor_bolierplate = "8PjtLgCGb6ypxeTBB1AdD17rR5V6GDDn1xnvVQRwRMFZ"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/sara.brodin/.config/solana/id.json"
+
+[scripts]
+test = "yarn run mocha -t 1000000 tests/"
