@@ -2,14 +2,19 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-anchor_bolierplate = "8PjtLgCGb6ypxeTBB1AdD17rR5V6GDDn1xnvVQRwRMFZ"
+anchor_bolierplate = "J4UfqL2dj6N5mTDxH6yym9ykU1dyP5wW519Ta9obTP9m"
+[programs.devnet]
+anchor_bolierplate = "J4UfqL2dj6N5mTDxH6yym9ykU1dyP5wW519Ta9obTP9m"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/sara.brodin/.config/solana/id.json"
 
-[scripts]
+[scripts2]
 test = "yarn run mocha -t 1000000 tests/"
+
+[scripts]
+test = "node tests/anchorbolierplate.js"
