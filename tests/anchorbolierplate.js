@@ -38,7 +38,7 @@ const main = async () => {
   console.log('👀 GIF List', account.gifList)
   console.log('👀 Votes Count', account.totalVotes.toString());
 
-  await program.rpc.updateItem(gif_link, {
+  await program.rpc.vote(gif_link, {
     accounts: {
       baseAccount: baseAccount.publicKey,
     },
@@ -46,6 +46,23 @@ const main = async () => {
 
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log('👀 Votes Count', account.totalVotes.toString());
+
+  await program.rpc.voteEfficient(account.gifList[0], {
+    accounts: {
+      baseAccount: baseAccount.publicKey,
+    },
+  });
+
+  account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+  console.log('👀 Votes Count', account.totalVotes.toString());
+ 
+  await program.rpc.tipSol( {
+    accounts: {
+      from: provider.wallet.publicKey, 
+      to: provider.wallet.publicKey, 
+      systemProgram: SystemProgram.programId,
+    },
+  });
 }
 
 const runMain = async () => {

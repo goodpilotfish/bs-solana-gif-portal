@@ -1,4 +1,6 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::system_instruction;
+use anchor_lang::solana_program::program::invoke;
 
 declare_id!("J4UfqL2dj6N5mTDxH6yym9ykU1dyP5wW519Ta9obTP9m");
 
@@ -10,6 +12,26 @@ pub mod anchorbolierplate {
         base_account.total_gifs = 0;
         base_account.total_votes = 0;
         Ok(()) 
+    }
+
+    // Sending user to program
+    pub fn tip_sol(ctx: Context<TipSol>) -> Result <()> {
+        const TIP: u64 = 100000;  // lamports
+        let transfer = system_instruction::transfer(
+            &ctx.accounts.from.key(),
+            &ctx.accounts.to.key(),
+            TIP,
+        );
+
+        invoke(
+            &transfer,
+            &[
+                ctx.accounts.from.to_account_info(),
+                ctx.accounts.to.to_account_info(),
+            ],
+        ).unwrap();
+
+        Ok(())
     }
 
     pub fn add_gif(ctx: Context<AddGif>, gif_link: String) -> Result <()> {
@@ -27,19 +49,28 @@ pub mod anchorbolierplate {
         Ok(())
     }
 
-    pub fn update_item(ctx: Context<UpdateItem>, gif_link: String) -> Result <()> {
+    // BUG: How to send reference instead of object?
+    pub fn vote_efficient(ctx: Context<Vote>, item: ItemStruct) -> Result <()> {
+        let mut votes = item.votes;
+        votes += 1;
+
         let base_account = &mut ctx.accounts.base_account;
-        //let gif_list = &mut ctx.accounts.base_account.gif_list;
+        base_account.total_votes += 1;
+        Ok(())
+    }
+
+    pub fn vote(ctx: Context<Vote>, gif_link: String) -> Result <()> {
+        let base_account = &mut ctx.accounts.base_account;
         let gif_list = &mut base_account.gif_list;
 
-        // find item
         for item in gif_list {
-            if item.gif_link == gif_link {
+            if gif_link == item.gif_link {
                 item.votes += 1;
             }
         }
 
         base_account.total_votes += 1;
+        
         Ok(())
     }
 }
@@ -62,9 +93,25 @@ pub struct AddGif<'info> {
 }
 
 #[derive(Accounts)]
-pub struct UpdateItem<'info> {
+pub struct VoteEfficient<'info> {
     #[account(mut)]
     pub base_account: Account<'info, BaseAccount>,
+}
+
+#[derive(Accounts)]
+pub struct Vote<'info> {
+    #[account(mut)]
+    pub base_account: Account<'info, BaseAccount>,
+}
+
+#[derive(Accounts)]
+pub struct TipSol<'info> {
+    #[account(mut)]
+    pub from: Signer<'info>,
+    #[account(mut)]
+    /// CHECK:` doc comment explaining why no checks through types are necessary.
+    pub to: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
 }
 
 // custom struct
