@@ -14,7 +14,6 @@ pub mod anchorbolierplate {
         Ok(()) 
     }
 
-    // Sending user to program
     pub fn tip_sol(ctx: Context<TipSol>) -> Result <()> {
         const TIP: u64 = 100000;  // lamports
         let transfer = system_instruction::transfer(
@@ -59,6 +58,7 @@ pub mod anchorbolierplate {
         Ok(())
     }
 
+    // NOTE: Loop is inefficent.
     pub fn vote(ctx: Context<Vote>, gif_link: String) -> Result <()> {
         let base_account = &mut ctx.accounts.base_account;
         let gif_list = &mut base_account.gif_list;
